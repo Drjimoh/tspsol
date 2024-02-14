@@ -1,6 +1,6 @@
 import numpy as np
 from graph_parser import read_city_data, to_array
-
+import time
 
 # Given distance matrix
 
@@ -43,13 +43,17 @@ def nearest_neighbor_algorithm(start_city):
 
     return tour
 
+start_time = time.time()
 # Test the algorithm starting from city 0
 start_city = 0
 optimal_tour = nearest_neighbor_algorithm(start_city)
 
 # Calculate total distance of the tour
 total_distance = sum(distance_matrix[optimal_tour[i]][optimal_tour[i + 1]] for i in range(len(optimal_tour) - 1))
+# Calculate duration
+duration = time.time() - start_time
 
 # Print the optimal tour and its total distance
 print("Optimal Tour:", optimal_tour)
 print("Total Distance:", total_distance)
+print("Duration:", duration, "seconds")
