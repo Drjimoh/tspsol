@@ -53,7 +53,7 @@ for i, permutation in enumerate(all_permutations, start=1):
         optimal_tour = permutation
 
     # Print progress report
-    if i % 1000 == 0:  # Adjust as needed
+    if i % 100000 == 0:  # Adjust as needed
         print(f"Progress: {i} permutations processed")
 
 # Calculate duration

@@ -1,35 +1,59 @@
-import random
+import itertools
+from graph_parser import read_city_data, to_array
+import time
+import concurrent.futures
 
-def generate_initial_population(population_size, cities):
-  population = []
-  for _ in range(population_size):
-    visited = list(range(len(cities)))
-    random.shuffle(visited)
-    population.append(visited)
-  return population
+# Function to calculate the total distance of a tour
+def calculate_tour_distance(tour):
+    total_distance = 0
+    for i in range(num_cities - 1):
+        total_distance += distance_matrix[tour[i]][tour[i+1]]
+    total_distance += distance_matrix[tour[-1]][tour[0]]  # Return to starting city
+    return total_distance
 
-def crossover(parent1, parent2):
-  crossover_point = random.randint(1, len(parent1) - 2)
-  child1 = parent1[:crossover_point] + parent2[crossover_point:]
-  child2 = parent2[:crossover_point] + parent1[crossover_point:]
-  return child1, child2
+# Define function for parallel processing
+def calculate_permutation_distance(permutation):
+    distance = calculate_tour_distance(permutation)
+    return distance
 
-def mutate(chromosome, mutation_rate):
-  for i in range(len(chromosome)):
-    if random.random() < mutation_rate:
-      j = random.randint(0, len(chromosome) - 1)
-      chromosome[i], chromosome[j] = chromosome[j], chromosome[i]
-  return chromosome
+if __name__ == "__main__":
+    # Given distance matrix
+    filepath = input(r"Enter the file path to your graph:").strip()
+    distance_matrix = to_array(read_city_data(filepath))
 
-def fitness(chromosome, distances):
-  total_distance = sum(distances[i][j] for i, j in zip(chromosome, chromosome[1:] + [chromosome[0]]))
-  return 1 / total_distance
+    # Number of cities
+    num_cities = len(distance_matrix)
 
-def genetic_tsp(cities, distances, population_size, iterations, mutation_rate):
-  population = generate_initial_population(population_size, cities)
-  for _ in range(iterations):
-    # Selection
-    new_population = []
-    for _ in range(population_size):
-      parent1 = tournament_selection(population, fitness)
-      parent2 = tournament_selection(population)
+    # Generate all possible permutations of cities
+    all_permutations = itertools.permutations(range(num_cities))
+
+    # Initialize minimum distance and corresponding tour
+    min_distance = float('inf')
+    optimal_tour = None
+
+    start_time = time.time()
+    total_permutations = 0
+
+    # Parallel processing using ThreadPoolExecutor
+    with concurrent.futures.ThreadPoolExecutor() as executor:
+        for i, permutation in enumerate(all_permutations, start=1):
+            # Calculate permutation distance
+            distance = calculate_tour_distance(permutation)
+
+            # Update minimum distance and corresponding tour
+            if distance < min_distance:
+                min_distance = distance
+                optimal_tour = permutation
+
+            # Print progress report
+            if i % 1000 == 0:  # Adjust as needed
+                print(f"Progress: {i} permutations processed")
+
+    # Calculate duration
+    duration = time.time() - start_time
+
+    # Print the optimal tour and its total distance
+    print("Optimal Tour:", optimal_tour)
+    print("Total Distance:", min_distance)
+    print("Total Permutations:", i)
+    print("Duration:", duration, "seconds")
