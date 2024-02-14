@@ -57,3 +57,12 @@ duration = time.time() - start_time
 print("Optimal Tour:", optimal_tour)
 print("Total Distance:", total_distance)
 print("Duration:", duration, "seconds")
+
+file_name = f"S{total_distance}_kovabor.sol"
+
+# Write the optimal tour to the file
+with open(file_name, "w") as file:
+    for node in optimal_tour:
+        file.write(str(node) + " ")
+
+print(f"output file saved as {file_name}")
