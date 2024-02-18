@@ -5,11 +5,13 @@ import time
 
 # Given distance matrix
 
+
 filepath = input(r"Enter the file path to your graph:").strip()
 distance_matrix = to_array(read_city_data(filepath))
 
 # Number of cities
 num_cities = len(distance_matrix)
+start_time = time.time()
 
 # Define parameters
 population_size = 10
@@ -54,7 +56,9 @@ for generation in range(num_generations):
 # Find the best tour
 best_tour = min(population, key=calculate_distance)
 best_distance = calculate_distance(best_tour)
-
+# Calculate duration
+duration = time.time() - start_time
+print("Duration:", duration, "seconds")
 # Print the best tour and its total distance
 print("Best Tour:", best_tour)
 print("Total Distance:", best_distance)
