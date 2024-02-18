@@ -1,7 +1,6 @@
 import numpy as np
 
 
-
 def read_city_data(filename):
     with open(filename, "r+") as f:
         city_data_lines = f.readlines()
@@ -15,11 +14,6 @@ def read_city_data(filename):
 
     return city_data_list
 
-# read graph file
-# filename = r"C:\Users\waliu\Documents\clients\KO\TSP Assignment new\data\Size10.graph"  # Replace with your actual file name
-# data = read_city_data(filename)
-
-# print(data)
 
 def to_array(data):
     # Convert the data to a NumPy array
